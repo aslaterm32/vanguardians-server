@@ -1,7 +1,8 @@
 from application import app, db
 from werkzeug import exceptions
 from flask import request, jsonify
-from application.models import User
+from application.models import User, Character
+from .controllers import index, show
 
 
 def format_user(user):
@@ -12,6 +13,10 @@ def format_user(user):
         "password": user.password,
     }
 
+def format_character(character):
+    return {
+        ""
+    }
 
 @app.route("/")
 def home():
@@ -19,7 +24,7 @@ def home():
         "message": "Welcome",
         "description": "Vanguardians API",
         "endpoints": [
-            "GET /"
+            "GET /",
             "GET /users"
         ]
     }, 200)
@@ -48,9 +53,19 @@ def user_route():
             return "Failed to create user", 500
 
 
-# @app.route("/users/<id>", methods=["PATCH", "DELETE"])
+# @app.route("/users/<int:id>", methods=["PATCH", "DELETE"])
 # def user_id_route(id):
 #     if request.method == "PATCH":
+
+
+@app.route("/characters", methods=["POST", "GET"])
+def handle_characters():
+    if request.method == "GET": return index()
+
+@app.route("/characters/<int:id>", methods=["GET"])
+def handle_character(id):
+    if request.method == "GET": return show(id)
+
 
 @app.errorhandler(exceptions.NotFound)
 def handle_404(err):
