@@ -16,3 +16,9 @@ class User(db.Model):
 
     def __repr__(self):
         return f"user_id: {self.user_id}\nusername: {self.username}\nemail: {self.email}\npassword: {self.password}"
+
+# class Character(db.Model):
+#     character_id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.Integer, nullable=False)
+#     character_class = db.Column(db.String(10), nullable=False)
+#     character_id = db.Column(db.Integer, nullable=False)
