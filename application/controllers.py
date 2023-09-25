@@ -14,7 +14,7 @@ def index():
   
 def show(id):
   try:
-    guardian = Guardian.query.filter_by(id=id).first()
+    guardian = Guardian.query.filter_by(g_id=id).first()
     return jsonify({"data": guardian.json}), 200
   except:
     raise exceptions.NotFound("")
