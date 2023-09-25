@@ -1,4 +1,5 @@
 from application import app, db
+from werkzeug import exceptions
 from flask import request, jsonify
 from application.models import User
 
@@ -14,7 +15,14 @@ def format_user(user):
 
 @app.route("/")
 def home():
-    return "<h1>ROUTES</h1><span>GET /users</span>"
+    return jsonify({
+        "message": "Welcome",
+        "description": "Vanguardians API",
+        "endpoints": [
+            "GET /"
+            "GET /users"
+        ]
+    }, 200)
 
 
 @app.route("/users", methods=["GET", "POST"])
@@ -43,3 +51,17 @@ def user_route():
 # @app.route("/users/<id>", methods=["PATCH", "DELETE"])
 # def user_id_route(id):
 #     if request.method == "PATCH":
+
+@app.errorhandler(exceptions.NotFound)
+def handle_404(err):
+  return jsonify({"error": f"ERR: {err}"}), 404
+
+
+@app.errorhandler(exceptions.InternalServerError)
+def handle_500(err):
+  return jsonify({"error": f"ERR: {err}"}), 500
+
+
+@app.errorhandler(exceptions.BadRequest)
+def handle_400(err):
+  return jsonify({"error": f"ERR: {err}"}), 400

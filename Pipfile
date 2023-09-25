@@ -9,6 +9,7 @@ flask-cors = "*"
 flask-sqlalchemy = "*"
 psycopg2-binary="*"
 python-dotenv="*"
+gunicorn = "*"
 
 [dev-packages]
 
@@ -16,4 +17,5 @@ python-dotenv="*"
 python_version = "3.11"
 
 [scripts]
-dev="flask run"
+dev="flask run -h 0.0.0.0"
+seed = "python seed.py"

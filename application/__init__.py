@@ -7,9 +7,10 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
+app.json_provider_class.sort_keys = False
 CORS(app)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DB_URL"]
-db = SQLAlchemy(app)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["SQLALCHEMY_DATABASE_URI"]
 
-from application import routes
+
+db = SQLAlchemy(app)
