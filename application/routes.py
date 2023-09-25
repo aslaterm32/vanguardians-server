@@ -1,7 +1,7 @@
 from application import app, db
 from werkzeug import exceptions
 from flask import request, jsonify
-from application.models import User, Character
+from application.models import User, Guardian
 from .controllers import index, show
 
 
@@ -25,8 +25,8 @@ def home():
         "description": "Vanguardians API",
         "endpoints": [
             "GET /",
-            "GET /users".
-            "GET /characters"
+            "GET /users",
+            "GET /characters",
             "GET /characters/:id"
         ]
     }, 200)
