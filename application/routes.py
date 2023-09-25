@@ -25,7 +25,9 @@ def home():
         "description": "Vanguardians API",
         "endpoints": [
             "GET /",
-            "GET /users"
+            "GET /users".
+            "GET /characters"
+            "GET /characters/:id"
         ]
     }, 200)
 
