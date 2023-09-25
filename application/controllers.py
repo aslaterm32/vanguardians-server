@@ -1,7 +1,8 @@
-from .models import Guardian
+from .models import User, Guardian
 from werkzeug import exceptions
 from flask import jsonify, request
 from . import db
+import json
 
 def index():
   try:

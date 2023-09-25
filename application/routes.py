@@ -2,7 +2,7 @@ from application import app, db
 from werkzeug import exceptions
 from flask import request, jsonify
 from application.models import User, Guardian
-from .controllers import index, show
+from .controllers import show, index
 
 
 def format_user(user):
@@ -15,8 +15,9 @@ def format_user(user):
 
 def format_guardian(guardian):
     return {
-        "id" : guardian.id,
+        "g_id" : guardian.g_id,
         "name" : guardian.name,
+        "about" : guardian.about,
         "g_class": guardian.g_class,
         "attack_type": guardian.attack_type
     }
