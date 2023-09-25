@@ -13,9 +13,12 @@ def format_user(user):
         "password": user.password,
     }
 
-def format_character(character):
+def format_guardian(guardian):
     return {
-        ""
+        "id" : guardian.id,
+        "name" : guardian.name,
+        "g_class": guardian.g_class,
+        "attack_type": guardian.attack_type
     }
 
 @app.route("/")
@@ -26,8 +29,8 @@ def home():
         "endpoints": [
             "GET /",
             "GET /users",
-            "GET /characters",
-            "GET /characters/:id"
+            "GET /guardians",
+            "GET /guardians/:id"
         ]
     }, 200)
 
@@ -60,12 +63,12 @@ def user_route():
 #     if request.method == "PATCH":
 
 
-@app.route("/characters", methods=["POST", "GET"])
-def handle_characters():
+@app.route("/guardians", methods=["POST", "GET"])
+def handle_guardians():
     if request.method == "GET": return index()
 
-@app.route("/characters/<int:id>", methods=["GET"])
-def handle_character(id):
+@app.route("/guardians/<int:id>", methods=["GET"])
+def handle_guardian(id):
     if request.method == "GET": return show(id)
 
 
