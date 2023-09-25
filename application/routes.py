@@ -15,7 +15,14 @@ def format_user(user):
 
 @app.route("/")
 def home():
-    return "<h1>ROUTES</h1><span>GET /users</span>"
+    return jsonify({
+        "message": "Welcome",
+        "description": "Vanguardians API",
+        "endpoints": [
+            "GET /"
+            "GET /users"
+        ]
+    }, 200)
 
 
 @app.route("/users", methods=["GET", "POST"])
