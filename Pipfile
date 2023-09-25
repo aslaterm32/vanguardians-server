@@ -17,5 +17,5 @@ gunicorn = "*"
 python_version = "3.11"
 
 [scripts]
-dev="flask run"
+dev="flask run -h 0.0.0.0"
 seed = "python seed.py"
