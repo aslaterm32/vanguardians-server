@@ -36,12 +36,14 @@ class Guardian(db.Model):
     about = db.Column(db.String(200), nullable=False)
     g_class = db.Column(db.String(20), nullable=False)
     attack_type = db.Column(db.String(20), nullable=False)
+    sprite = db.Column(db.String(300), nullable=True)
 
-    def __init__(self, name, about, g_class, attack_type):
+    def __init__(self, name, about, g_class, attack_type, sprite):
         self.name = name
         self.about = about
         self.g_class = g_class
         self.attack_type = attack_type
+        self.sprite = sprite
 
     def __repr__(self):
         return f"g_id: {self.g_id}, name: {self.name}"
@@ -54,4 +56,5 @@ class Guardian(db.Model):
             "about": self.about,
             "g_class": self.g_class,
             "attack_type": self.attack_type,
+            "sprite": self.sprite
         }
