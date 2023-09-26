@@ -102,8 +102,10 @@ def user_id_route(id):
 def scores_route():
     if request.method == "GET":
         try:
-            scores = Score.query.join(User).add_columns(
-                Score.score_id, Score.value, Score.user_id, User.username
+            scores = (
+                Score.query.join(User)
+                .add_columns(Score.score_id, Score.value, Score.user_id, User.username)
+                .order_by(db.desc(Score.value))
             )
             score_list = []
             for score in scores:
