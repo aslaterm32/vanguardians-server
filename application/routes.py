@@ -1,7 +1,7 @@
 from application import app, db
 from werkzeug import exceptions
 from flask import request, jsonify
-from application.models import User, Guardian
+from application.models import User, Guardian, Score
 from .controllers import show, index
 
 
@@ -11,6 +11,16 @@ def format_user(user):
         "username": user.username,
         "email": user.email,
         "password": user.password,
+    }
+
+
+def format_score(score):
+    print(score.username)
+    return {
+        "score_id": score.score_id,
+        "value": score.value,
+        "user_id": score.user_id,
+        "username": score.username,
     }
 
 
@@ -60,7 +70,7 @@ def user_route():
             db.session.commit()
             return "User successfully created", 201
         except:
-            return "Failed to create user", 500
+            return "Failed to create user", 400
 
 
 @app.route("/users/<int:id>", methods=["PATCH", "DELETE"])
@@ -86,6 +96,33 @@ def user_id_route(id):
             return "Successfully deleted user", 200
         except:
             return "Failed to delete user", 404
+
+
+@app.route("/scores", methods=["GET", "POST"])
+def scores_route():
+    if request.method == "GET":
+        try:
+            scores = Score.query.join(User).add_columns(
+                Score.score_id, Score.value, Score.user_id, User.username
+            )
+            score_list = []
+            for score in scores:
+                score_list.append(format_score(score))
+            return score_list, 200
+        except:
+            return "Could not get scores", 500
+    elif request.method == "POST":
+        data = request.json
+        try:
+            if User.query.get(data["user_id"]):
+                score = Score(data["value"], data["user_id"])
+                db.session.add(score)
+                db.session.commit()
+                return f"Score added", 201
+            else:
+                raise exceptions.NotFound
+        except:
+            return "Failed to add score", 404
 
 
 @app.route("/guardians", methods=["POST", "GET"])
