@@ -14,7 +14,6 @@ def format_user(user):
 
 
 def format_score(score):
-    print(score.username)
     return {
         "score_id": score.score_id,
         "value": score.value,

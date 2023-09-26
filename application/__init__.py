@@ -8,7 +8,9 @@ load_dotenv()
 
 app = Flask(__name__)
 app.json_provider_class.sort_keys = False
-CORS(app, resources={r"/users": {"origins": "http://localhost:5173"}}, supports_credentials=True)
+CORS(
+    app
+)  # resources={r"/users": {"origins": "http://localhost:5173"}}, supports_credentials=True
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["SQLALCHEMY_DATABASE_URI"]
 
