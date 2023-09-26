@@ -19,7 +19,8 @@ def format_guardian(guardian):
         "name" : guardian.name,
         "about" : guardian.about,
         "g_class": guardian.g_class,
-        "attack_type": guardian.attack_type
+        "attack_type": guardian.attack_type,
+        "sprite": guardian.sprite
     }
 
 @app.route("/")
@@ -64,7 +65,7 @@ def user_route():
 #     if request.method == "PATCH":
 
 
-@app.route("/guardians", methods=["POST", "GET"])
+@app.route("/guardians", methods=["GET"])
 def handle_guardians():
     if request.method == "GET": return index()
 
