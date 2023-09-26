@@ -29,6 +29,7 @@ def format_guardian(guardian):
         "about": guardian.about,
         "g_class": guardian.g_class,
         "attack_type": guardian.attack_type,
+        "sprite": guardian.sprite
     }
 
 
@@ -126,7 +127,7 @@ def scores_route():
             return "Failed to add score", 404
 
 
-@app.route("/guardians", methods=["POST", "GET"])
+@app.route("/guardians", methods=["GET"])
 def handle_guardians():
     if request.method == "GET":
         return index()
