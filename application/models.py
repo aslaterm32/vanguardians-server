@@ -5,17 +5,30 @@ app.app_context().push()
 
 class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(50), nullable=False)
+    scores = db.relationship("Score", backref="user")
 
-    def __init__(self, username, email, password):
+    def __init__(self, username, password):
         self.username = username
-        self.email = email
         self.password = password
 
     def __repr__(self):
-        return f"user_id: {self.user_id}\nusername: {self.username}\nemail: {self.email}\npassword: {self.password}"
+        return f"user_id: {self.user_id}\nusername: {self.username}\npassword: {self.password}"
+
+
+class Score(db.Model):
+    score_id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"), nullable=False)
+
+    def __init__(self, value, user_id):
+        self.value = value
+        self.user_id = user_id
+
+    def __repr__(self):
+        return f"score_id: {self.score}\nvalue: {self.value}\nuser_id: {self.user_id}"
+
 
 class Guardian(db.Model):
     g_id = db.Column(db.Integer, primary_key=True)
@@ -37,4 +50,11 @@ class Guardian(db.Model):
 
     @property
     def json(self):
-        return{"g_id": self.g_id, "name": self.name, "about": self.about, "g_class": self.g_class, "attack_type": self.attack_type, "sprite": self.sprite}
+        return {
+            "g_id": self.g_id,
+            "name": self.name,
+            "about": self.about,
+            "g_class": self.g_class,
+            "attack_type": self.attack_type,
+            "sprite": self.sprite
+        }
