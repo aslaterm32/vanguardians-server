@@ -9,7 +9,6 @@ def format_user(user):
     return {
         "user_id": user.user_id,
         "username": user.username,
-        "email": user.email,
         "password": user.password,
     }
 
@@ -65,7 +64,8 @@ def user_route():
     elif request.method == "POST":
         try:
             data = request.json
-            user = User(data["username"], data["email"], data["password"])
+            print(data)
+            user = User(data["username"], data["password"])
             db.session.add(user)
             db.session.commit()
             return "User successfully created", 201
