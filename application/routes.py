@@ -1,4 +1,5 @@
 from application import app, db
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug import exceptions
 from flask import request, jsonify
 from application.models import User, Guardian, Score
@@ -64,8 +65,11 @@ def user_route():
     elif request.method == "POST":
         try:
             data = request.json
-            print(data)
-            user = User(data["username"], data["password"])
+            username = data.get("username")
+            password = data.get("password")
+            pwd_hash = generate_password_hash(data["password"])
+            print(pwd_hash)
+            user = User(username = username, password = generate_password_hash(password))
             db.session.add(user)
             db.session.commit()
             return "User successfully created", 201

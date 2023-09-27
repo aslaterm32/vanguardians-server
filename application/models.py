@@ -6,7 +6,7 @@ app.app_context().push()
 class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
-    password = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(500), nullable=False)
     scores = db.relationship("Score", backref="user")
 
     def __init__(self, username, password):
