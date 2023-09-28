@@ -1,8 +1,10 @@
 from application import app, db
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug import exceptions
 from flask import request, jsonify
-from application.models import User, Guardian, Score
+from application.models import User, Guardian, Score, Token
 from .controllers import show, index
+from flask_uuid import uuid
 
 
 def format_user(user):
@@ -14,12 +16,17 @@ def format_user(user):
 
 
 def format_score(score):
-    return {
+    formatted_score = {
         "score_id": score.score_id,
         "value": score.value,
         "user_id": score.user_id,
-        "username": score.username,
     }
+
+    try:
+        formatted_score["username"] = score.username
+        return formatted_score
+    except AttributeError:
+        return formatted_score
 
 
 def format_guardian(guardian):
@@ -29,7 +36,7 @@ def format_guardian(guardian):
         "about": guardian.about,
         "g_class": guardian.g_class,
         "attack_type": guardian.attack_type,
-        "sprite": guardian.sprite
+        "sprite": guardian.sprite,
     }
 
 
@@ -61,16 +68,60 @@ def user_route():
             return user_list, 200
         except:
             return "Failed to fetch users", 404
-    elif request.method == "POST":
-        try:
-            data = request.json
-            print(data)
-            user = User(data["username"], data["password"])
-            db.session.add(user)
+
+
+@app.route("/auth", methods=["POST"])
+def auth_route():
+    try:
+        token = Token.query.filter_by(token=request.headers["token"]).first()
+        user = User.query.filter_by(user_id=token.user_id).first()
+        return jsonify(format_user(user)), 200
+    except:
+        return "Could not authenticate user", 401
+
+
+@app.route("/login", methods=["POST"])
+def login_route():
+    try:
+        data = request.json
+        user = User.query.filter_by(username=data["username"]).first()
+        if check_password_hash(user.password, data["password"]):
+            token = Token(uuid.uuid4(), user.user_id)
+            db.session.add(token)
             db.session.commit()
-            return "User successfully created", 201
-        except:
-            return "Failed to create user", 400
+            return jsonify({"authenticated": "true", "token": token.token})
+    except:
+        return "Failed to find user", 404
+
+
+@app.route("/register", methods=["POST"])
+def register_route():
+    try:
+        data = request.json
+        username = data.get("username")
+        password = data.get("password")
+        pwd_hash = generate_password_hash(data["password"])
+        print(pwd_hash)
+        user = User(username=username, password=generate_password_hash(password))
+        db.session.add(user)
+        db.session.commit()
+        return "User successfully created", 201
+    except:
+        return "Failed to create user", 400
+
+
+@app.route("/logout", methods=["DELETE"])
+def logout_route():
+    try:
+        tokens = Token.query.filter_by(token=request.headers["token"]).first()
+        tokens = Token.query.filter_by(user_id=tokens.user_id).all()
+        if tokens:
+            for token in tokens:
+                db.session.delete(token)
+                db.session.commit()
+        return "User logged out, tokens deleted", 202
+    except:
+        return "Unable to log user out", 500
 
 
 @app.route("/users/<int:id>", methods=["PATCH", "DELETE"])
@@ -125,6 +176,18 @@ def scores_route():
                 raise exceptions.NotFound
         except:
             return "Failed to add score", 404
+
+
+@app.route("/scores/<int:user_id>", methods=["GET"])
+def scores_id_route(user_id):
+    try:
+        scores = Score.query.filter_by(user_id=user_id).all()
+        score_list = []
+        for score in scores:
+            score_list.append(format_score(score))
+        return jsonify(score_list), 200
+    except:
+        return "Failed to identify user", 404
 
 
 @app.route("/guardians", methods=["GET"])
