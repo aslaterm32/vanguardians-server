@@ -19,7 +19,7 @@ class User(db.Model):
 
 
 class Token(db.Model):
-    token_id = db.Column(db.Integer, primary_key=True)
+    token_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     token = db.Column(db.String(100), nullable=False, unique=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"), nullable=False)
 

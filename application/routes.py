@@ -2,8 +2,9 @@ from application import app, db
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug import exceptions
 from flask import request, jsonify
-from application.models import User, Guardian, Score
+from application.models import User, Guardian, Score, Token
 from .controllers import show, index
+from flask_uuid import uuid
 
 
 def format_user(user):
@@ -56,7 +57,7 @@ def home():
     )
 
 
-@app.route("/users", methods=["GET"])
+@app.route("/users", methods=["GET", "POST"])
 def user_route():
     if request.method == "GET":
         try:
@@ -74,11 +75,11 @@ def login_route():
     try:
         data = request.json
         user = User.query.filter_by(username=data["username"]).first()
-        authenticated = check_password_hash(user.password, data["password"])
-        print(authenticated)
-        if authenticated:
-            print("hit l78")
-            return jsonify({"authenticated": "true"})
+        if check_password_hash(user.password, data["password"]):
+            token = Token(uuid.uuid4(), user.user_id)
+            db.session.add(token)
+            db.session.commit()
+            return jsonify({"authenticated": "true", "token": token.token})
     except:
         return "Failed to find user", 404
 
