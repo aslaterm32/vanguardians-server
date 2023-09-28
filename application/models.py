@@ -8,7 +8,8 @@ class User(db.Model, UserMixin):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(500), nullable=False)
-    scores = db.relationship("Score", backref="user")
+    score = db.relationship("Score", backref="user", cascade="all, delete-orphan")
+    token = db.relationship("Token", backref="user", cascade="all, delete-orphan")
 
     def __init__(self, username, password):
         self.username = username
@@ -16,6 +17,21 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f"user_id: {self.user_id}\nusername: {self.username}\npassword: {self.password}"
+
+
+class Token(db.Model):
+    token_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    token = db.Column(db.String(100), nullable=False, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"), nullable=False)
+
+    def __init__(self, token, user_id):
+        self.token = token
+        self.user_id = user_id
+
+    def __repr__(self):
+        return (
+            f"token_id: {self.token_id}\ntoken: {self.token}\nuser_id: {self.user_id}"
+        )
 
 
 class Score(db.Model):
