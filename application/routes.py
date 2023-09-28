@@ -4,6 +4,7 @@ from werkzeug import exceptions
 from flask import request, jsonify
 from application.models import User, Guardian, Score
 from .controllers import show, index
+from flask_login import login_user, login_required, logout_user, current_user
 
 
 def format_user(user):
@@ -75,7 +76,28 @@ def user_route():
             return "User successfully created", 201
         except:
             return "Failed to create user", 400
+        
 
+@app.route("/login", methods=["POST"])
+def login():
+    if request.method == "POST":
+        try:
+            data = request.json
+            username = data.get("username")
+            password = data.get("password")
+
+            user = User.query.filter_by(username = username).first()
+            if user:
+                if check_password_hash(user.password, password):
+                    login_user(user, remember = True)
+                    return "Login successful", 200
+        except:
+            return "Login failed", 400
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
 
 @app.route("/users/<int:id>", methods=["PATCH", "DELETE"])
 def user_id_route(id):
