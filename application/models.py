@@ -1,5 +1,4 @@
 from application import db, app
-from flask_login import UserMixin
 
 app.app_context().push()
 
