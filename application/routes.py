@@ -70,6 +70,16 @@ def user_route():
             return "Failed to fetch users", 404
 
 
+@app.route("/auth", methods=["POST"])
+def auth_route():
+    try:
+        token = Token.query.filter_by(token=request.headers["token"]).first()
+        user = User.query.filter_by(user_id=token.user_id).first()
+        return jsonify(format_user(user)), 200
+    except:
+        return "Could not authenticate user", 401
+
+
 @app.route("/login", methods=["POST"])
 def login_route():
     try:
@@ -98,6 +108,20 @@ def register_route():
         return "User successfully created", 201
     except:
         return "Failed to create user", 400
+
+
+@app.route("/logout", methods=["DELETE"])
+def logout_route():
+    try:
+        tokens = Token.query.filter_by(token=request.headers["token"]).first()
+        tokens = Token.query.filter_by(user_id=tokens.user_id).all()
+        if tokens:
+            for token in tokens:
+                db.session.delete(token)
+                db.session.commit()
+        return "User logged out, tokens deleted", 202
+    except:
+        return "Unable to log user out", 500
 
 
 @app.route("/users/<int:id>", methods=["PATCH", "DELETE"])
