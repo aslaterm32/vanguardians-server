@@ -16,12 +16,17 @@ def format_user(user):
 
 
 def format_score(score):
-    return {
+    formatted_score = {
         "score_id": score.score_id,
         "value": score.value,
         "user_id": score.user_id,
-        "username": score.username,
     }
+
+    try:
+        formatted_score["username"] = score.username
+        return formatted_score
+    except AttributeError:
+        return formatted_score
 
 
 def format_guardian(guardian):
@@ -31,7 +36,7 @@ def format_guardian(guardian):
         "about": guardian.about,
         "g_class": guardian.g_class,
         "attack_type": guardian.attack_type,
-        "sprite": guardian.sprite
+        "sprite": guardian.sprite,
     }
 
 
@@ -70,7 +75,7 @@ def user_route():
             password = data.get("password")
             pwd_hash = generate_password_hash(data["password"])
             print(pwd_hash)
-            user = User(username = username, password = generate_password_hash(password))
+            user = User(username=username, password=generate_password_hash(password))
             db.session.add(user)
             db.session.commit()
             return "User successfully created", 201
@@ -151,6 +156,18 @@ def scores_route():
                 raise exceptions.NotFound
         except:
             return "Failed to add score", 404
+
+
+@app.route("/scores/<int:user_id>", methods=["GET"])
+def scores_id_route(user_id):
+    try:
+        scores = Score.query.filter_by(user_id=user_id).all()
+        score_list = []
+        for score in scores:
+            score_list.append(format_score(score))
+        return jsonify(score_list), 200
+    except:
+        return "Failed to identify user", 404
 
 
 @app.route("/guardians", methods=["GET"])

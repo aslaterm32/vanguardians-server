@@ -28,7 +28,9 @@ class Score(db.Model):
         self.user_id = user_id
 
     def __repr__(self):
-        return f"score_id: {self.score}\nvalue: {self.value}\nuser_id: {self.user_id}"
+        return (
+            f"score_id: {self.score_id}\nvalue: {self.value}\nuser_id: {self.user_id}"
+        )
 
 
 class Guardian(db.Model):
@@ -57,5 +59,5 @@ class Guardian(db.Model):
             "about": self.about,
             "g_class": self.g_class,
             "attack_type": self.attack_type,
-            "sprite": self.sprite
+            "sprite": self.sprite,
         }
