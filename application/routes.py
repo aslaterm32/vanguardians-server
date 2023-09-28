@@ -56,7 +56,7 @@ def home():
     )
 
 
-@app.route("/users", methods=["GET", "POST"])
+@app.route("/users", methods=["GET"])
 def user_route():
     if request.method == "GET":
         try:
@@ -67,19 +67,36 @@ def user_route():
             return user_list, 200
         except:
             return "Failed to fetch users", 404
-    elif request.method == "POST":
-        try:
-            data = request.json
-            username = data.get("username")
-            password = data.get("password")
-            pwd_hash = generate_password_hash(data["password"])
-            print(pwd_hash)
-            user = User(username=username, password=generate_password_hash(password))
-            db.session.add(user)
-            db.session.commit()
-            return "User successfully created", 201
-        except:
-            return "Failed to create user", 400
+
+
+@app.route("/login", methods=["POST"])
+def login_route():
+    try:
+        data = request.json
+        user = User.query.filter_by(username=data["username"]).first()
+        authenticated = check_password_hash(user.password, data["password"])
+        print(authenticated)
+        if authenticated:
+            print("hit l78")
+            return jsonify({"authenticated": "true"})
+    except:
+        return "Failed to find user", 404
+
+
+@app.route("/register", methods=["POST"])
+def register_route():
+    try:
+        data = request.json
+        username = data.get("username")
+        password = data.get("password")
+        pwd_hash = generate_password_hash(data["password"])
+        print(pwd_hash)
+        user = User(username=username, password=generate_password_hash(password))
+        db.session.add(user)
+        db.session.commit()
+        return "User successfully created", 201
+    except:
+        return "Failed to create user", 400
 
 
 @app.route("/users/<int:id>", methods=["PATCH", "DELETE"])
