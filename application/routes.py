@@ -2,7 +2,7 @@ from application import app, db
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug import exceptions
 from flask import request, jsonify
-from application.models import User, Guardian, Score, Token
+from application.models import User, Guardian, Score, Token, Stat
 from .controllers import show, index
 from flask_uuid import uuid
 
@@ -27,6 +27,18 @@ def format_score(score):
         return formatted_score
     except AttributeError:
         return formatted_score
+
+
+def format_stat(stat):
+    return {
+        "stat_id": stat.stat_id,
+        "hours_played": stat.hours_played,
+        "metres_gained": stat.metres_gained,
+        "enemies_defeated": stat.enemies_defeated,
+        "damage_given": stat.damage_given,
+        "damaage_recieved": stat.damage_recieved,
+        "user_id": stat.user_id,
+    }
 
 
 def format_guardian(guardian):
@@ -188,6 +200,44 @@ def scores_id_route(user_id):
         return jsonify(score_list), 200
     except:
         return "Failed to identify user", 404
+
+
+@app.route("/stats", methods=["POST"])
+def stats_route():
+    try:
+        data = request.json
+        stat = Stat.query.filter_by(user_id=data["user_id"]).first()
+        if stat:
+            stat.hours_played += data["hours_played"]
+            stat.metres_gained += data["metres_gained"]
+            stat.enemies_defeated += data["enemies_defeated"]
+            stat.damage_given += data["damage_given"]
+            stat.damage_recieved += data["damage_recieved"]
+            db.session.commit()
+        else:
+            stat = Stat(
+                hours_played=data["hours_played"],
+                metres_gained=data["metres_gained"],
+                enemies_defeated=data["enemies_defeated"],
+                damage_given=data["damage_given"],
+                damage_recieved=data["damage_recieved"],
+                user_id=data["user_id"],
+            )
+            print(stat)
+            db.session.add(stat)
+            db.session.commit()
+        return jsonify(format_stat(stat)), 201
+    except:
+        return "Unable to save stats", 400
+
+
+@app.route("/stats/<int:user_id>", methods=["GET"])
+def stats_id_route(user_id):
+    try:
+        stat = Stat.query.filter_by(user_id=user_id).first()
+        return jsonify(format_stat(stat)), 200
+    except:
+        return "User not found", 404
 
 
 @app.route("/guardians", methods=["GET"])
