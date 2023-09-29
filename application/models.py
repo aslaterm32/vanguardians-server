@@ -9,6 +9,7 @@ class User(db.Model):
     password = db.Column(db.String(500), nullable=False)
     score = db.relationship("Score", backref="user", cascade="all, delete-orphan")
     token = db.relationship("Token", backref="user", cascade="all, delete-orphan")
+    stat = db.relationship("Stat", backref="user", cascade="all, delete-orphan")
 
     def __init__(self, username, password):
         self.username = username
@@ -46,6 +47,35 @@ class Score(db.Model):
         return (
             f"score_id: {self.score_id}\nvalue: {self.value}\nuser_id: {self.user_id}"
         )
+
+
+class Stat(db.Model):
+    stat_id = db.Column(db.Integer, primary_key=True)
+    hours_played = db.Column(db.Integer, nullable=False)
+    metres_gained = db.Column(db.Integer, nullable=False)
+    enemies_defeated = db.Column(db.Integer, nullable=False)
+    damage_given = db.Column(db.Integer, nullable=False)
+    damage_recieved = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"), nullable=False)
+
+    def __init__(
+        self,
+        hours_played,
+        metres_gained,
+        enemies_defeated,
+        damage_given,
+        damage_recieved,
+        user_id,
+    ):
+        self.hours_played = hours_played
+        self.metres_gained = metres_gained
+        self.enemies_defeated = enemies_defeated
+        self.damage_given = damage_given
+        self.damage_recieved = damage_recieved
+        self.user_id = user_id
+
+    def __repr__(self):
+        return f"hours_played: {self.hours_played}\nenemies_defeated: {self.enemies_defeated}\ndamage_given: {self.damage_recieved}\ndamage_recieved: {self.damage_recieved}"
 
 
 class Guardian(db.Model):
