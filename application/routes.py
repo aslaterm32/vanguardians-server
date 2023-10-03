@@ -140,11 +140,9 @@ def user_id_route(id):
     user = User.query.get(id)
     if request.method == "PATCH":
         try:
-            if data["username"]:
+            if "username" in data.keys():
                 user.username = data["username"]
-            if data["email"]:
-                user.email = data["email"]
-            if data["password"]:
+            if "password" in data.keys():
                 user.password = data["password"]
             db.session.commit()
             return jsonify(format_user(user)), 200
