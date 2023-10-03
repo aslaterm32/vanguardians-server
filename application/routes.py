@@ -69,7 +69,7 @@ def home():
     )
 
 
-@app.route("/users", methods=["GET", "POST"])
+@app.route("/users", methods=["GET"])
 def user_route():
     if request.method == "GET":
         try:
@@ -112,8 +112,6 @@ def register_route():
         data = request.json
         username = data.get("username")
         password = data.get("password")
-        pwd_hash = generate_password_hash(data["password"])
-        print(pwd_hash)
         user = User(username=username, password=generate_password_hash(password))
         db.session.add(user)
         db.session.commit()
@@ -142,11 +140,9 @@ def user_id_route(id):
     user = User.query.get(id)
     if request.method == "PATCH":
         try:
-            if data["username"]:
+            if "username" in data.keys():
                 user.username = data["username"]
-            if data["email"]:
-                user.email = data["email"]
-            if data["password"]:
+            if "password" in data.keys():
                 user.password = data["password"]
             db.session.commit()
             return jsonify(format_user(user)), 200
