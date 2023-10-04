@@ -36,7 +36,7 @@ def format_stat(stat):
         "metres_gained": stat.metres_gained,
         "enemies_defeated": stat.enemies_defeated,
         "damage_given": stat.damage_given,
-        "damaage_recieved": stat.damage_recieved,
+        "damage_recieved": stat.damage_recieved,
         "user_id": stat.user_id,
     }
 
@@ -48,7 +48,8 @@ def format_guardian(guardian):
         "about": guardian.about,
         "g_class": guardian.g_class,
         "attack_type": guardian.attack_type,
-        "sprite": guardian.sprite,
+        "mode_1": guardian.mode_1,
+        "mode_2": guardian.mode_2
     }
 
 
@@ -69,7 +70,7 @@ def home():
     )
 
 
-@app.route("/users", methods=["GET", "POST"])
+@app.route("/users", methods=["GET"])
 def user_route():
     if request.method == "GET":
         try:
@@ -112,8 +113,6 @@ def register_route():
         data = request.json
         username = data.get("username")
         password = data.get("password")
-        pwd_hash = generate_password_hash(data["password"])
-        print(pwd_hash)
         user = User(username=username, password=generate_password_hash(password))
         db.session.add(user)
         db.session.commit()
@@ -142,11 +141,9 @@ def user_id_route(id):
     user = User.query.get(id)
     if request.method == "PATCH":
         try:
-            if data["username"]:
+            if "username" in data.keys():
                 user.username = data["username"]
-            if data["email"]:
-                user.email = data["email"]
-            if data["password"]:
+            if "password" in data.keys():
                 user.password = data["password"]
             db.session.commit()
             return jsonify(format_user(user)), 200
@@ -223,7 +220,6 @@ def stats_route():
                 damage_recieved=data["damage_recieved"],
                 user_id=data["user_id"],
             )
-            print(stat)
             db.session.add(stat)
             db.session.commit()
         return jsonify(format_stat(stat)), 201
@@ -233,8 +229,10 @@ def stats_route():
 
 @app.route("/stats/<int:user_id>", methods=["GET"])
 def stats_id_route(user_id):
+    print(user_id)
     try:
         stat = Stat.query.filter_by(user_id=user_id).first()
+        print(stat)
         return jsonify(format_stat(stat)), 200
     except:
         return "User not found", 404

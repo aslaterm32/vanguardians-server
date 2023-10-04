@@ -6,13 +6,12 @@ import os
 
 load_dotenv()
 
+
 app = Flask(__name__)
 app.json_provider_class.sort_keys = False
 CORS(
     app, supports_credentials=True 
 )
-
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["SQLALCHEMY_DATABASE_URI"]
-
 
 db = SQLAlchemy(app)
