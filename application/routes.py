@@ -36,7 +36,7 @@ def format_stat(stat):
         "metres_gained": stat.metres_gained,
         "enemies_defeated": stat.enemies_defeated,
         "damage_given": stat.damage_given,
-        "damaage_recieved": stat.damage_recieved,
+        "damage_recieved": stat.damage_recieved,
         "user_id": stat.user_id,
     }
 
@@ -220,7 +220,6 @@ def stats_route():
                 damage_recieved=data["damage_recieved"],
                 user_id=data["user_id"],
             )
-            print(stat)
             db.session.add(stat)
             db.session.commit()
         return jsonify(format_stat(stat)), 201
@@ -230,8 +229,10 @@ def stats_route():
 
 @app.route("/stats/<int:user_id>", methods=["GET"])
 def stats_id_route(user_id):
+    print(user_id)
     try:
         stat = Stat.query.filter_by(user_id=user_id).first()
+        print(stat)
         return jsonify(format_stat(stat)), 200
     except:
         return "User not found", 404
