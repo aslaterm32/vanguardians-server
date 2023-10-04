@@ -114,12 +114,34 @@ def test_stats_route(client):
     }
 
 
-def test_scores_id_route(client):
+def test_stats_id_route(client):
     response = client.get("/users")
     test_id = response.json[-1]["user_id"]
-    print(test_id)
-    response = client.get(f"/stats/2")
-    print(response)
+    response = client.get(f"/stats/{test_id}")
+    stat_id = response.json["stat_id"]
+    assert response.status == "200 OK"
+    assert response.json == {
+        "stat_id": stat_id,
+        "hours_played": 2,
+        "metres_gained": 2,
+        "enemies_defeated": 2,
+        "damage_given": 2,
+        "damage_recieved": 2,
+        "user_id": test_id,
+    }
+
+
+def test_guardians_route(client):
+    response = client.get("/guardians")
+    assert response.status == "200 OK"
+    assert len(response.json["guardians"]) == 6
+
+
+def test_guardians_id_route(client):
+    for guardian_id in range(1, 7):
+        response = client.get(f"/guardians/{guardian_id}")
+        assert response.status == "200 OK"
+        assert response.json["data"]["g_id"] == guardian_id
 
 
 def test_logout(client):
@@ -135,10 +157,10 @@ def test_logout(client):
     assert response.status == "202 ACCEPTED"
 
 
-# def test_delete_user(client):
-#     response = client.get("/users")
-#     test_id = response.json[-1]["user_id"]
-#     response = client.delete(
-#         f"/users/{test_id}", json={"test_data": "test_data"}
-#     )  # see line 64 comment
-#     assert response.status == "200 OK"
+def test_delete_user(client):
+    response = client.get("/users")
+    test_id = response.json[-1]["user_id"]
+    response = client.delete(
+        f"/users/{test_id}", json={"test_data": "test_data"}
+    )  # see line 64 comment
+    assert response.status == "200 OK"
