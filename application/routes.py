@@ -49,7 +49,7 @@ def format_guardian(guardian):
         "g_class": guardian.g_class,
         "attack_type": guardian.attack_type,
         "mode_1": guardian.mode_1,
-        "mode_2": guardian.mode_2
+        "mode_2": guardian.mode_2,
     }
 
 
@@ -229,10 +229,8 @@ def stats_route():
 
 @app.route("/stats/<int:user_id>", methods=["GET"])
 def stats_id_route(user_id):
-    print(user_id)
     try:
         stat = Stat.query.filter_by(user_id=user_id).first()
-        print(stat)
         return jsonify(format_stat(stat)), 200
     except:
         return "User not found", 404
