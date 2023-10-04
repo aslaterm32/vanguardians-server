@@ -48,7 +48,8 @@ def format_guardian(guardian):
         "about": guardian.about,
         "g_class": guardian.g_class,
         "attack_type": guardian.attack_type,
-        "sprite": guardian.sprite,
+        "mode_1": guardian.mode_1,
+        "mode_2": guardian.mode_2
     }
 
 
