@@ -81,17 +81,20 @@ class Stat(db.Model):
 class Guardian(db.Model):
     g_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    about = db.Column(db.String(200), nullable=False)
+    about = db.Column(db.String(500), nullable=False)
     g_class = db.Column(db.String(20), nullable=False)
     attack_type = db.Column(db.String(20), nullable=False)
-    sprite = db.Column(db.String(300), nullable=True)
+    mode_1 = db.Column(db.String(300), nullable=False)
+    mode_2 = db.Column(db.String(300), nullable=False)
+    
 
-    def __init__(self, name, about, g_class, attack_type, sprite):
+    def __init__(self, name, about, g_class, attack_type, mode_1, mode_2):
         self.name = name
         self.about = about
         self.g_class = g_class
         self.attack_type = attack_type
-        self.sprite = sprite
+        self.mode_1 = mode_1
+        self.mode_2 = mode_2
 
     def __repr__(self):
         return f"g_id: {self.g_id}, name: {self.name}"
@@ -104,5 +107,6 @@ class Guardian(db.Model):
             "about": self.about,
             "g_class": self.g_class,
             "attack_type": self.attack_type,
-            "sprite": self.sprite,
+            "mode_1": self.mode_1,
+            "mode_2": self.mode_2,
         }
