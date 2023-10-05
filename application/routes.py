@@ -102,7 +102,13 @@ def login_route():
             token = Token(uuid.uuid4(), user.user_id)
             db.session.add(token)
             db.session.commit()
-            return jsonify({"authenticated": "true", "token": token.token})
+            return jsonify(
+                {
+                    "authenticated": "true",
+                    "token": token.token,
+                    "user": format_user(user),
+                }
+            )
     except:
         return "Failed to find user", 404
 
